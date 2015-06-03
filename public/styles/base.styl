@@ -1,0 +1,36 @@
+global-reset();
+
+@font-face {
+    font-family: defaultFontFamily;
+    font-style: fontStyle;
+    font-weight: defaultFontWeight;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: defaultFontFamily;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    color: whiteBarelyTranparent;
+    overflow-x: hidden;
+    height: 100%;
+}
+
+body {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    color: blackTransparent;
+}
+
+a {
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

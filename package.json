@@ -9,7 +9,9 @@
   "author": "Liwei Nick Luo",
   "license": "MIT",
   "devDependencies": {
+    "browserify": "^10.2.3",
     "gulp": "^3.8.11",
+    "gulp-browserify": "^0.5.1",
     "gulp-stylus": "^2.0.3",
     "nib": "^1.1.0",
     "stylus": "^0.51.1",
