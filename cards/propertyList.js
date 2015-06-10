@@ -4,7 +4,10 @@ var fastn = require('./fastn'),
 module.exports = function() {
 	return fastn('list', 
 		{
-			items: propertyService.properties
+			items: propertyService.properties,
+			template: function(model, scope){
+				return require('./propertyView.js')().binding('item');
+			}
 		}
 	);
-}
+};

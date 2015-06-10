@@ -1,7 +1,8 @@
 var cpjax = require('cpjax'),
-	fastn = require('fastn');
+	fastn = require('./fastn');
 
-function getUsers(callback) {
+console.log('fastn is ', fastn);
+function getProperties(callback) {
 	cpjax({
 		url: './properties.json',
 		dataType: 'json'
@@ -10,6 +11,14 @@ function getUsers(callback) {
 
 var propertyModel = new fastn.Model({
 	properties: []
+});
+
+getProperties(function(error, properties){
+	if (error) {
+		return;
+	}
+	console.log(properties);
+	propertyModel.set('properties', properties);
 });
 
 module.exports = {

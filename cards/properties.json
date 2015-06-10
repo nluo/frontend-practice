@@ -1,0 +1,19 @@
+[
+	{
+		"price": "$929,000",
+		"suburb": "Sunnybank Hills",
+		"address": "81 Park Avenue",
+		"images": {
+			"main": "https://i2.au.reastatic.net/480x320/3c0c126e2b6230d385097e82711fcf1f43270730627feeadc35de625be482211/main.jpg"
+		}
+	},
+	{
+		"price": "Auction",
+		"suburb": "Stretton",
+		"address": "35 Regency Place Stretton Qld 4116",
+		"images": {
+			"main": "http://i1.au.reastatic.net/456x342/4ac280e3de86008ad89f19c8256fb626d40da309c35b552aa09b20556d79d1fb/main.jpg"
+		}
+	}
+
+]
