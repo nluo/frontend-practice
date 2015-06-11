@@ -33,7 +33,6 @@ window.onload = function(){
 var cpjax = require('cpjax'),
 	fastn = require('./fastn');
 
-console.log('fastn is ', fastn);
 function getProperties(callback) {
 	cpjax({
 		url: './properties.json',
@@ -49,7 +48,6 @@ getProperties(function(error, properties){
 	if (error) {
 		return;
 	}
-	console.log(properties);
 	propertyModel.set('properties', properties);
 });
 
@@ -63,6 +61,7 @@ var fastn = require('./fastn'),
 module.exports = function() {
 	return fastn('list', 
 		{
+			tagName: 'ul',
 			items: propertyService.properties,
 			template: function(model, scope){
 				return require('./propertyView.js')().binding('item');
@@ -75,10 +74,9 @@ var fastn = require('./fastn');
 
 
 module.exports = function() {
-	return fastn('div', {},
+	return fastn('li',
 		fastn('img', {
 			src: fastn.binding('images.main', function(object){
-				console.log(object);
 				return object;
 			})
 		})
@@ -708,13 +706,15 @@ module.exports = function(type, fastn){
 
     container.insert = function(child, index){
         var component = child;
-        
+
         if(index && typeof index === 'object'){
             component = Array.prototype.slice.call(arguments);
         }
 
         if(Array.isArray(component)){
-            component.forEach(container.insert);
+            component.forEach(function(component, i){
+                container.insert(component, i + (index || 0));
+            });
             return container;
         }
 
@@ -730,6 +730,7 @@ module.exports = function(type, fastn){
         if(isNaN(index)){
             index = container._children.length;
         }
+
         if(currentIndex !== index){
             if(~currentIndex){
                 container._children.splice(currentIndex, 1);
@@ -797,7 +798,7 @@ module.exports = function(type, fastn){
     };
 
     container.on('render', function(){
-        container.insert(container._children);
+        container.insert(container._children, 0);
     });
 
     container.on('attach', function(data, firm){
@@ -830,6 +831,12 @@ module.exports = {
             value = value.join(' ');
         }
         element.className = generic._initialClasses + ' ' + value;
+    },
+    display: function(generic, element, value){
+        if(arguments.length === 2){
+            return element.style.display !== 'none';
+        }
+        element.style.display = value ? null : 'none';
     },
     disabled: function(generic, element, value){
         if(arguments.length === 2){
@@ -913,10 +920,11 @@ function createProperty(fastn, generic, key, settings){
         return;
     }
 
-    function update(value, property){
-        var element = generic.getContainerElement();
+    function update(){
+        var element = generic.getContainerElement(),
+            value = property();
 
-        if(!element){
+        if(!element || generic._destroyed){
             return;
         }
 
@@ -946,13 +954,11 @@ function createProperty(fastn, generic, key, settings){
     }
 
     if(!property){
-        property = fastn.property(value, function(){
-            if(generic.element){
-                genericComponent.schedule(property, function(){
-                    update(property._value, property);
-                });
+        property = fastn.property(value, function(value){
+            if(document.contains(generic.element)){
+                genericComponent.schedule(property, update);
             }else{
-                update(property._value, property);
+                update();
             }
         });
     }
@@ -3043,7 +3049,7 @@ module.exports = function (value) {
 
 },{"./is-iterable":61}],69:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"./is-implemented":70,"./polyfill":71,"dup":62}],70:[function(require,module,exports){
+},{"./is-implemented":70,"./polyfill":71,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/index.js":62}],70:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -3372,48 +3378,48 @@ module.exports = (function () {
 }());
 
 },{}],77:[function(require,module,exports){
-arguments[4][25][0].apply(exports,arguments)
-},{"dup":25,"es5-ext/object/copy":84,"es5-ext/object/map":92,"es5-ext/object/valid-callable":97,"es5-ext/object/valid-value":99}],78:[function(require,module,exports){
-arguments[4][26][0].apply(exports,arguments)
-},{"dup":26,"es5-ext/object/assign":81,"es5-ext/object/is-callable":87,"es5-ext/object/normalize-options":93,"es5-ext/string/#/contains":100}],79:[function(require,module,exports){
-arguments[4][27][0].apply(exports,arguments)
-},{"../../object/valid-value":99,"dup":27}],80:[function(require,module,exports){
-arguments[4][34][0].apply(exports,arguments)
-},{"./is-callable":87,"./valid-callable":97,"./valid-value":99,"dup":34}],81:[function(require,module,exports){
-arguments[4][35][0].apply(exports,arguments)
-},{"./is-implemented":82,"./shim":83,"dup":35}],82:[function(require,module,exports){
-arguments[4][36][0].apply(exports,arguments)
-},{"dup":36}],83:[function(require,module,exports){
-arguments[4][37][0].apply(exports,arguments)
-},{"../keys":89,"../valid-value":99,"dup":37}],84:[function(require,module,exports){
-arguments[4][38][0].apply(exports,arguments)
-},{"./assign":81,"./valid-value":99,"dup":38}],85:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"./set-prototype-of/is-implemented":95,"./set-prototype-of/shim":96,"dup":39}],86:[function(require,module,exports){
-arguments[4][40][0].apply(exports,arguments)
-},{"./_iterate":80,"dup":40}],87:[function(require,module,exports){
-arguments[4][41][0].apply(exports,arguments)
-},{"dup":41}],88:[function(require,module,exports){
-arguments[4][42][0].apply(exports,arguments)
-},{"dup":42}],89:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"./is-implemented":90,"./shim":91,"dup":43}],90:[function(require,module,exports){
-arguments[4][44][0].apply(exports,arguments)
-},{"dup":44}],91:[function(require,module,exports){
-arguments[4][45][0].apply(exports,arguments)
-},{"dup":45}],92:[function(require,module,exports){
-arguments[4][46][0].apply(exports,arguments)
-},{"./for-each":86,"./valid-callable":97,"dup":46}],93:[function(require,module,exports){
-arguments[4][47][0].apply(exports,arguments)
-},{"dup":47}],94:[function(require,module,exports){
-arguments[4][48][0].apply(exports,arguments)
-},{"./is-implemented":95,"./shim":96,"dup":48}],95:[function(require,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"dup":49}],96:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"../create":85,"../is-object":88,"../valid-value":99,"dup":50}],97:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"dup":51}],98:[function(require,module,exports){
+module.exports=require(25)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/d/auto-bind.js":25,"es5-ext/object/copy":84,"es5-ext/object/map":92,"es5-ext/object/valid-callable":97,"es5-ext/object/valid-value":99}],78:[function(require,module,exports){
+module.exports=require(26)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/d/index.js":26,"es5-ext/object/assign":81,"es5-ext/object/is-callable":87,"es5-ext/object/normalize-options":93,"es5-ext/string/#/contains":100}],79:[function(require,module,exports){
+module.exports=require(27)
+},{"../../object/valid-value":99,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/array/#/clear.js":27}],80:[function(require,module,exports){
+module.exports=require(34)
+},{"./is-callable":87,"./valid-callable":97,"./valid-value":99,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/_iterate.js":34}],81:[function(require,module,exports){
+module.exports=require(35)
+},{"./is-implemented":82,"./shim":83,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/assign/index.js":35}],82:[function(require,module,exports){
+module.exports=require(36)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/assign/is-implemented.js":36}],83:[function(require,module,exports){
+module.exports=require(37)
+},{"../keys":89,"../valid-value":99,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/assign/shim.js":37}],84:[function(require,module,exports){
+module.exports=require(38)
+},{"./assign":81,"./valid-value":99,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/copy.js":38}],85:[function(require,module,exports){
+module.exports=require(39)
+},{"./set-prototype-of/is-implemented":95,"./set-prototype-of/shim":96,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/create.js":39}],86:[function(require,module,exports){
+module.exports=require(40)
+},{"./_iterate":80,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/for-each.js":40}],87:[function(require,module,exports){
+module.exports=require(41)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/is-callable.js":41}],88:[function(require,module,exports){
+module.exports=require(42)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/is-object.js":42}],89:[function(require,module,exports){
+module.exports=require(43)
+},{"./is-implemented":90,"./shim":91,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/keys/index.js":43}],90:[function(require,module,exports){
+module.exports=require(44)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/keys/is-implemented.js":44}],91:[function(require,module,exports){
+module.exports=require(45)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/keys/shim.js":45}],92:[function(require,module,exports){
+module.exports=require(46)
+},{"./for-each":86,"./valid-callable":97,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/map.js":46}],93:[function(require,module,exports){
+module.exports=require(47)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/normalize-options.js":47}],94:[function(require,module,exports){
+module.exports=require(48)
+},{"./is-implemented":95,"./shim":96,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/set-prototype-of/index.js":48}],95:[function(require,module,exports){
+module.exports=require(49)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/set-prototype-of/is-implemented.js":49}],96:[function(require,module,exports){
+module.exports=require(50)
+},{"../create":85,"../is-object":88,"../valid-value":99,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/set-prototype-of/shim.js":50}],97:[function(require,module,exports){
+module.exports=require(51)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/valid-callable.js":51}],98:[function(require,module,exports){
 'use strict';
 
 var isObject = require('./is-object');
@@ -3424,16 +3430,16 @@ module.exports = function (value) {
 };
 
 },{"./is-object":88}],99:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"dup":52}],100:[function(require,module,exports){
-arguments[4][53][0].apply(exports,arguments)
-},{"./is-implemented":101,"./shim":102,"dup":53}],101:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],102:[function(require,module,exports){
-arguments[4][55][0].apply(exports,arguments)
-},{"dup":55}],103:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"dup":56}],104:[function(require,module,exports){
+module.exports=require(52)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/valid-value.js":52}],100:[function(require,module,exports){
+module.exports=require(53)
+},{"./is-implemented":101,"./shim":102,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/#/contains/index.js":53}],101:[function(require,module,exports){
+module.exports=require(54)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/#/contains/is-implemented.js":54}],102:[function(require,module,exports){
+module.exports=require(55)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/#/contains/shim.js":55}],103:[function(require,module,exports){
+module.exports=require(56)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/is-string.js":56}],104:[function(require,module,exports){
 'use strict';
 
 var generated = Object.create(null)
@@ -3447,30 +3453,30 @@ module.exports = function () {
 };
 
 },{}],105:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"./":108,"d":78,"dup":57,"es5-ext/object/set-prototype-of":94,"es5-ext/string/#/contains":100}],106:[function(require,module,exports){
-arguments[4][58][0].apply(exports,arguments)
-},{"./get":107,"dup":58,"es5-ext/object/valid-callable":97,"es5-ext/string/is-string":103}],107:[function(require,module,exports){
-arguments[4][59][0].apply(exports,arguments)
-},{"./array":105,"./string":110,"./valid-iterable":111,"dup":59,"es5-ext/string/is-string":103,"es6-symbol":112}],108:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"d":78,"d/auto-bind":77,"dup":60,"es5-ext/array/#/clear":79,"es5-ext/object/assign":81,"es5-ext/object/valid-callable":97,"es5-ext/object/valid-value":99,"es6-symbol":112}],109:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"dup":61,"es5-ext/string/is-string":103,"es6-symbol":112}],110:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"./":108,"d":78,"dup":67,"es5-ext/object/set-prototype-of":94}],111:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./is-iterable":109,"dup":68}],112:[function(require,module,exports){
-arguments[4][62][0].apply(exports,arguments)
-},{"./is-implemented":113,"./polyfill":115,"dup":62}],113:[function(require,module,exports){
-arguments[4][63][0].apply(exports,arguments)
-},{"dup":63}],114:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"dup":64}],115:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"./validate-symbol":116,"d":78,"dup":65}],116:[function(require,module,exports){
-arguments[4][66][0].apply(exports,arguments)
-},{"./is-symbol":114,"dup":66}],117:[function(require,module,exports){
+module.exports=require(57)
+},{"./":108,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/array.js":57,"d":78,"es5-ext/object/set-prototype-of":94,"es5-ext/string/#/contains":100}],106:[function(require,module,exports){
+module.exports=require(58)
+},{"./get":107,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/for-of.js":58,"es5-ext/object/valid-callable":97,"es5-ext/string/is-string":103}],107:[function(require,module,exports){
+module.exports=require(59)
+},{"./array":105,"./string":110,"./valid-iterable":111,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/get.js":59,"es5-ext/string/is-string":103,"es6-symbol":112}],108:[function(require,module,exports){
+module.exports=require(60)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/index.js":60,"d":78,"d/auto-bind":77,"es5-ext/array/#/clear":79,"es5-ext/object/assign":81,"es5-ext/object/valid-callable":97,"es5-ext/object/valid-value":99,"es6-symbol":112}],109:[function(require,module,exports){
+module.exports=require(61)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/is-iterable.js":61,"es5-ext/string/is-string":103,"es6-symbol":112}],110:[function(require,module,exports){
+module.exports=require(67)
+},{"./":108,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/string.js":67,"d":78,"es5-ext/object/set-prototype-of":94}],111:[function(require,module,exports){
+module.exports=require(68)
+},{"./is-iterable":109,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/valid-iterable.js":68}],112:[function(require,module,exports){
+module.exports=require(62)
+},{"./is-implemented":113,"./polyfill":115,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/index.js":62}],113:[function(require,module,exports){
+module.exports=require(63)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/is-implemented.js":63}],114:[function(require,module,exports){
+module.exports=require(64)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/is-symbol.js":64}],115:[function(require,module,exports){
+module.exports=require(65)
+},{"./validate-symbol":116,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/polyfill.js":65,"d":78}],116:[function(require,module,exports){
+module.exports=require(66)
+},{"./is-symbol":114,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/validate-symbol.js":66}],117:[function(require,module,exports){
 'use strict';
 
 var setPrototypeOf    = require('es5-ext/object/set-prototype-of')
@@ -3633,52 +3639,52 @@ Object.defineProperty(MapIterator.prototype, toStringTagSymbol,
 	d('c', 'Map Iterator'));
 
 },{"./iterator-kinds":121,"d":124,"es5-ext/object/set-prototype-of":147,"es6-iterator":159,"es6-symbol":168}],123:[function(require,module,exports){
-arguments[4][25][0].apply(exports,arguments)
-},{"dup":25,"es5-ext/object/copy":136,"es5-ext/object/map":144,"es5-ext/object/valid-callable":150,"es5-ext/object/valid-value":151}],124:[function(require,module,exports){
-arguments[4][26][0].apply(exports,arguments)
-},{"dup":26,"es5-ext/object/assign":133,"es5-ext/object/is-callable":139,"es5-ext/object/normalize-options":145,"es5-ext/string/#/contains":152}],125:[function(require,module,exports){
-arguments[4][27][0].apply(exports,arguments)
-},{"../../object/valid-value":151,"dup":27}],126:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"../../number/to-pos-integer":131,"../../object/valid-value":151,"dup":28}],127:[function(require,module,exports){
-arguments[4][29][0].apply(exports,arguments)
-},{"./is-implemented":128,"./shim":129,"dup":29}],128:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"dup":30}],129:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"dup":31}],130:[function(require,module,exports){
-arguments[4][32][0].apply(exports,arguments)
-},{"../math/sign":127,"dup":32}],131:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"./to-integer":130,"dup":33}],132:[function(require,module,exports){
-arguments[4][34][0].apply(exports,arguments)
-},{"./is-callable":139,"./valid-callable":150,"./valid-value":151,"dup":34}],133:[function(require,module,exports){
-arguments[4][35][0].apply(exports,arguments)
-},{"./is-implemented":134,"./shim":135,"dup":35}],134:[function(require,module,exports){
-arguments[4][36][0].apply(exports,arguments)
-},{"dup":36}],135:[function(require,module,exports){
-arguments[4][37][0].apply(exports,arguments)
-},{"../keys":141,"../valid-value":151,"dup":37}],136:[function(require,module,exports){
-arguments[4][38][0].apply(exports,arguments)
-},{"./assign":133,"./valid-value":151,"dup":38}],137:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"./set-prototype-of/is-implemented":148,"./set-prototype-of/shim":149,"dup":39}],138:[function(require,module,exports){
-arguments[4][40][0].apply(exports,arguments)
-},{"./_iterate":132,"dup":40}],139:[function(require,module,exports){
-arguments[4][41][0].apply(exports,arguments)
-},{"dup":41}],140:[function(require,module,exports){
-arguments[4][42][0].apply(exports,arguments)
-},{"dup":42}],141:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"./is-implemented":142,"./shim":143,"dup":43}],142:[function(require,module,exports){
-arguments[4][44][0].apply(exports,arguments)
-},{"dup":44}],143:[function(require,module,exports){
-arguments[4][45][0].apply(exports,arguments)
-},{"dup":45}],144:[function(require,module,exports){
-arguments[4][46][0].apply(exports,arguments)
-},{"./for-each":138,"./valid-callable":150,"dup":46}],145:[function(require,module,exports){
-arguments[4][47][0].apply(exports,arguments)
-},{"dup":47}],146:[function(require,module,exports){
+module.exports=require(25)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/d/auto-bind.js":25,"es5-ext/object/copy":136,"es5-ext/object/map":144,"es5-ext/object/valid-callable":150,"es5-ext/object/valid-value":151}],124:[function(require,module,exports){
+module.exports=require(26)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/d/index.js":26,"es5-ext/object/assign":133,"es5-ext/object/is-callable":139,"es5-ext/object/normalize-options":145,"es5-ext/string/#/contains":152}],125:[function(require,module,exports){
+module.exports=require(27)
+},{"../../object/valid-value":151,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/array/#/clear.js":27}],126:[function(require,module,exports){
+module.exports=require(28)
+},{"../../number/to-pos-integer":131,"../../object/valid-value":151,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/array/#/e-index-of.js":28}],127:[function(require,module,exports){
+module.exports=require(29)
+},{"./is-implemented":128,"./shim":129,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/math/sign/index.js":29}],128:[function(require,module,exports){
+module.exports=require(30)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/math/sign/is-implemented.js":30}],129:[function(require,module,exports){
+module.exports=require(31)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/math/sign/shim.js":31}],130:[function(require,module,exports){
+module.exports=require(32)
+},{"../math/sign":127,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/number/to-integer.js":32}],131:[function(require,module,exports){
+module.exports=require(33)
+},{"./to-integer":130,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/number/to-pos-integer.js":33}],132:[function(require,module,exports){
+module.exports=require(34)
+},{"./is-callable":139,"./valid-callable":150,"./valid-value":151,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/_iterate.js":34}],133:[function(require,module,exports){
+module.exports=require(35)
+},{"./is-implemented":134,"./shim":135,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/assign/index.js":35}],134:[function(require,module,exports){
+module.exports=require(36)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/assign/is-implemented.js":36}],135:[function(require,module,exports){
+module.exports=require(37)
+},{"../keys":141,"../valid-value":151,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/assign/shim.js":37}],136:[function(require,module,exports){
+module.exports=require(38)
+},{"./assign":133,"./valid-value":151,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/copy.js":38}],137:[function(require,module,exports){
+module.exports=require(39)
+},{"./set-prototype-of/is-implemented":148,"./set-prototype-of/shim":149,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/create.js":39}],138:[function(require,module,exports){
+module.exports=require(40)
+},{"./_iterate":132,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/for-each.js":40}],139:[function(require,module,exports){
+module.exports=require(41)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/is-callable.js":41}],140:[function(require,module,exports){
+module.exports=require(42)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/is-object.js":42}],141:[function(require,module,exports){
+module.exports=require(43)
+},{"./is-implemented":142,"./shim":143,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/keys/index.js":43}],142:[function(require,module,exports){
+module.exports=require(44)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/keys/is-implemented.js":44}],143:[function(require,module,exports){
+module.exports=require(45)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/keys/shim.js":45}],144:[function(require,module,exports){
+module.exports=require(46)
+},{"./for-each":138,"./valid-callable":150,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/map.js":46}],145:[function(require,module,exports){
+module.exports=require(47)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/normalize-options.js":47}],146:[function(require,module,exports){
 'use strict';
 
 var forEach = Array.prototype.forEach, create = Object.create;
@@ -3690,56 +3696,56 @@ module.exports = function (arg/*, …args*/) {
 };
 
 },{}],147:[function(require,module,exports){
-arguments[4][48][0].apply(exports,arguments)
-},{"./is-implemented":148,"./shim":149,"dup":48}],148:[function(require,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"dup":49}],149:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"../create":137,"../is-object":140,"../valid-value":151,"dup":50}],150:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"dup":51}],151:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"dup":52}],152:[function(require,module,exports){
-arguments[4][53][0].apply(exports,arguments)
-},{"./is-implemented":153,"./shim":154,"dup":53}],153:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],154:[function(require,module,exports){
-arguments[4][55][0].apply(exports,arguments)
-},{"dup":55}],155:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"dup":56}],156:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"./":159,"d":124,"dup":57,"es5-ext/object/set-prototype-of":147,"es5-ext/string/#/contains":152}],157:[function(require,module,exports){
-arguments[4][58][0].apply(exports,arguments)
-},{"./get":158,"dup":58,"es5-ext/object/valid-callable":150,"es5-ext/string/is-string":155}],158:[function(require,module,exports){
-arguments[4][59][0].apply(exports,arguments)
-},{"./array":156,"./string":166,"./valid-iterable":167,"dup":59,"es5-ext/string/is-string":155,"es6-symbol":161}],159:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"d":124,"d/auto-bind":123,"dup":60,"es5-ext/array/#/clear":125,"es5-ext/object/assign":133,"es5-ext/object/valid-callable":150,"es5-ext/object/valid-value":151,"es6-symbol":161}],160:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"dup":61,"es5-ext/string/is-string":155,"es6-symbol":161}],161:[function(require,module,exports){
+module.exports=require(48)
+},{"./is-implemented":148,"./shim":149,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/set-prototype-of/index.js":48}],148:[function(require,module,exports){
+module.exports=require(49)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/set-prototype-of/is-implemented.js":49}],149:[function(require,module,exports){
+module.exports=require(50)
+},{"../create":137,"../is-object":140,"../valid-value":151,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/set-prototype-of/shim.js":50}],150:[function(require,module,exports){
+module.exports=require(51)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/valid-callable.js":51}],151:[function(require,module,exports){
+module.exports=require(52)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/object/valid-value.js":52}],152:[function(require,module,exports){
+module.exports=require(53)
+},{"./is-implemented":153,"./shim":154,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/#/contains/index.js":53}],153:[function(require,module,exports){
+module.exports=require(54)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/#/contains/is-implemented.js":54}],154:[function(require,module,exports){
+module.exports=require(55)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/#/contains/shim.js":55}],155:[function(require,module,exports){
+module.exports=require(56)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es5-ext/string/is-string.js":56}],156:[function(require,module,exports){
+module.exports=require(57)
+},{"./":159,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/array.js":57,"d":124,"es5-ext/object/set-prototype-of":147,"es5-ext/string/#/contains":152}],157:[function(require,module,exports){
+module.exports=require(58)
+},{"./get":158,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/for-of.js":58,"es5-ext/object/valid-callable":150,"es5-ext/string/is-string":155}],158:[function(require,module,exports){
+module.exports=require(59)
+},{"./array":156,"./string":166,"./valid-iterable":167,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/get.js":59,"es5-ext/string/is-string":155,"es6-symbol":161}],159:[function(require,module,exports){
+module.exports=require(60)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/index.js":60,"d":124,"d/auto-bind":123,"es5-ext/array/#/clear":125,"es5-ext/object/assign":133,"es5-ext/object/valid-callable":150,"es5-ext/object/valid-value":151,"es6-symbol":161}],160:[function(require,module,exports){
+module.exports=require(61)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/is-iterable.js":61,"es5-ext/string/is-string":155,"es6-symbol":161}],161:[function(require,module,exports){
+module.exports=require(62)
+},{"./is-implemented":162,"./polyfill":164,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/index.js":62}],162:[function(require,module,exports){
+module.exports=require(63)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/is-implemented.js":63}],163:[function(require,module,exports){
+module.exports=require(64)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/is-symbol.js":64}],164:[function(require,module,exports){
+module.exports=require(65)
+},{"./validate-symbol":165,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/polyfill.js":65,"d":124}],165:[function(require,module,exports){
+module.exports=require(66)
+},{"./is-symbol":163,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/validate-symbol.js":66}],166:[function(require,module,exports){
+module.exports=require(67)
+},{"./":159,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/string.js":67,"d":124,"es5-ext/object/set-prototype-of":147}],167:[function(require,module,exports){
+module.exports=require(68)
+},{"./is-iterable":160,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/valid-iterable.js":68}],168:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"./is-implemented":162,"./polyfill":164,"dup":62}],162:[function(require,module,exports){
-arguments[4][63][0].apply(exports,arguments)
-},{"dup":63}],163:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"dup":64}],164:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"./validate-symbol":165,"d":124,"dup":65}],165:[function(require,module,exports){
-arguments[4][66][0].apply(exports,arguments)
-},{"./is-symbol":163,"dup":66}],166:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"./":159,"d":124,"dup":67,"es5-ext/object/set-prototype-of":147}],167:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./is-iterable":160,"dup":68}],168:[function(require,module,exports){
-arguments[4][62][0].apply(exports,arguments)
-},{"./is-implemented":169,"./polyfill":170,"dup":62}],169:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],170:[function(require,module,exports){
-arguments[4][71][0].apply(exports,arguments)
-},{"d":124,"dup":71}],171:[function(require,module,exports){
-arguments[4][72][0].apply(exports,arguments)
-},{"d":124,"dup":72,"es5-ext/object/valid-callable":150}],172:[function(require,module,exports){
+},{"./is-implemented":169,"./polyfill":170,"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-iterator/node_modules/es6-symbol/index.js":62}],169:[function(require,module,exports){
+module.exports=require(70)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-symbol/is-implemented.js":70}],170:[function(require,module,exports){
+module.exports=require(71)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/es6-symbol/polyfill.js":71,"d":124}],171:[function(require,module,exports){
+module.exports=require(72)
+},{"/Users/liweiluo/Sites/haha/node_modules/fastn/node_modules/enti/node_modules/es6-set/node_modules/event-emitter/index.js":72,"d":124,"es5-ext/object/valid-callable":150}],172:[function(require,module,exports){
 'use strict';
 
 var clear          = require('es5-ext/array/#/clear')

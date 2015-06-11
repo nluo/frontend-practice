@@ -1,7 +1,6 @@
 var cpjax = require('cpjax'),
 	fastn = require('./fastn');
 
-console.log('fastn is ', fastn);
 function getProperties(callback) {
 	cpjax({
 		url: './properties.json',
@@ -17,7 +16,6 @@ getProperties(function(error, properties){
 	if (error) {
 		return;
 	}
-	console.log(properties);
 	propertyModel.set('properties', properties);
 });
 

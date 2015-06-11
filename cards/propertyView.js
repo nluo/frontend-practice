@@ -2,10 +2,9 @@ var fastn = require('./fastn');
 
 
 module.exports = function() {
-	return fastn('div', {},
+	return fastn('li',
 		fastn('img', {
 			src: fastn.binding('images.main', function(object){
-				console.log(object);
 				return object;
 			})
 		})
