@@ -18,9 +18,7 @@ module.exports = fastn;
 var fastn = require('./fastn'),
 	propertyService = require('./property');
 
-console.log('properties are ', propertyService.properties);
-
-var app = fastn('div', {class: 'cards-list'},
+var app = fastn('div', {class: 'flexbox'},
 		require('./propertyList')()
 	);
 
@@ -62,6 +60,7 @@ module.exports = function() {
 	return fastn('list', 
 		{
 			tagName: 'ul',
+			class: 'flex-card-list',
 			items: propertyService.properties,
 			template: function(model, scope){
 				return require('./propertyView.js')().binding('item');
@@ -74,13 +73,25 @@ var fastn = require('./fastn');
 
 
 module.exports = function() {
-	return fastn('li',
-		fastn('img', {
-			src: fastn.binding('images.main', function(object){
-				return object;
-			})
-		})
-	);
+    return fastn('li',
+        {class: 'flex-card-listitem'},
+
+        fastn('div', {class: 'flex-card'},
+            fastn('div', {class: 'flex-card-image'},
+                fastn('img', {
+                    src: fastn.binding('images.main', function(object){
+                        return object;
+                    })
+                })
+            ),
+            fastn('div', {class: 'flex-card-content'},
+                fastn('h3', {class: 'flex-card-heading'},
+                    fastn.binding('price')
+                ),
+                fastn('p', fastn.binding('address'))
+            )
+        )
+    );
 };
 },{"./fastn":1}],6:[function(require,module,exports){
 var Ajax = require('simple-ajax');

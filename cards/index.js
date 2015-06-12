@@ -1,9 +1,7 @@
 var fastn = require('./fastn'),
 	propertyService = require('./property');
 
-console.log('properties are ', propertyService.properties);
-
-var app = fastn('div', {class: 'cards-list'},
+var app = fastn('div', {class: 'flexbox'},
 		require('./propertyList')()
 	);
 
