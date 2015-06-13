@@ -1,9 +1,8 @@
 var fastn = require('./fastn'),
 	propertyService = require('./property');
 
-var app = fastn('div', {class: 'flexbox'},
-		require('./propertyList')()
-	);
+var app = require('./propertyList')();
+
 
 
 window.onload = function(){

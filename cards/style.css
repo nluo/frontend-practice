@@ -1,11 +1,59 @@
-.flexbox .flex-card-list {
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background: #f7f7f7;
+}
+
+.flex-card-list {
 	display: flex;
 	flex-wrap: wrap;
+	padding: 0;
 }
 
 
-.flexbox .flex-card-listitem {
+.flex-card-listitem {
 	display: flex;
+	list-style: none;
+}
+
+.flex-card-image img{
+	display: block;
+	height: auto;
+	margin: 0 auto;
+	max-width: 100%;
+	width: 100%;
+}
+
+.flex-card h3 {
+	margin: 1em 0;
+}
+
+
+.flex-card {
+
+	display:flex;
+	flex-direction:column;
+	background: #fff;
+	border-radius: 8px;
+	margin: 1em;
+	padding: 1em;
+	z-index: 2;
+	box-shadow: 4px 4px 8px 1px rgba(0, 0, 0, 0.2);
+
+}
+
+.flex-card-content {
+
+	display:flex;
+	flex:1 0 auto; /* We have to add a basis for IE10/11 */
+	flex-direction:column;
+
+}
+
+.flex-card-content p {
+	flex:1 0 auto; /* We have to add a basis for IE10/11 */
 }
 
 /* Code to adjust the layout to 2 cards per row */
@@ -44,22 +92,3 @@
 
 }
 
-.flexbox .flex-card {
-
-	display:flex;
-	flex-direction:column;
-
-}
-
-.flexbox .flex-card-content {
-
-	display:flex;
-	flex:1 0 auto; /* We have to add a basis for IE10/11 */
-	flex-direction:column;
-
-}
-
-
-.flexbox .flex-card-content p {
-	flex:1 0 auto; /* We have to add a basis for IE10/11 */
-}
