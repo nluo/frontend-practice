@@ -81,7 +81,7 @@ body {
 
 	/* common to flex and non-flex */
 	.flex-card-list li {
-		width:33.33%;
+		width:20%;
 	}
 
 	/* Float specific: Clear after every third item */
